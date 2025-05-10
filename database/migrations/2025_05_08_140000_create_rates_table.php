@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rates', function (Blueprint $table) {
-            $table->id('rates_id');
+            $table->increments('rates_id');
             $table->string('position', 255);
             $table->decimal('hourly_rate', 10, 2);
             $table->timestamps();

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dailytimerecords', function (Blueprint $table) {
-            $table->id('record_id');
-            $table->unsignedBigInteger('employee_id');
+            $table->increments('record_id');
+            $table->unsignedInteger('employee_id');
             $table->date('entry_date');
             $table->time('time_in');
             $table->time('time_out');

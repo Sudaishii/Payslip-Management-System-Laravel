@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id('emp_id');
+            $table->increments('emp_id');
             $table->string('emp_fname', 50);
             $table->string('emp_middle', 255)->nullable();
             $table->string('emp_lname', 50);
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('emp_hdate');
             $table->string('emp_dept', 50);
             $table->string('emp_position', 50);
-            $table->unsignedBigInteger('rates_id');
+            $table->unsignedInteger('rates_id');
             $table->foreign('rates_id')->references('rates_id')->on('rates')->onDelete('restrict');
             $table->timestamps();
         });
