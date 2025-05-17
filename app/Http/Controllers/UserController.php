@@ -56,6 +56,12 @@ class UserController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
 
+        // Check for existing user by email to prevent redundancy
+        $existingUser = User::where('user_email', $validated['user_email'])->first();
+        if ($existingUser) {
+            return response()->json(['message' => 'User with this email already exists', 'user' => $existingUser], 409);
+        }
+
         $user = User::create($validated);
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);

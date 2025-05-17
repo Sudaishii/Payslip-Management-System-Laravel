@@ -44,6 +44,12 @@ class HumanResourceController extends Controller
             return response()->json(['message' => 'Rate ID not found for the given position'], 422);
         }
 
+        // Check for existing employee by email to prevent redundancy
+        $existingEmployee = Employees::where('emp_email', $validated['emp_email'])->first();
+        if ($existingEmployee) {
+            return response()->json(['message' => 'Employee with this email already exists', 'employee' => $existingEmployee], 409);
+        }
+
         $employee = Employees::create($validated);
 
         return response()->json(['message' => 'Employee added successfully', 'employee' => $employee]);

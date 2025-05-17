@@ -122,6 +122,15 @@ class DailyTimeRecordController extends Controller
                 return response()->json(['message' => 'Validation failed', 'errors' => $validator->errors()], 422);
             }
 
+            // Check for existing record to prevent redundancy
+            $existingRecord = DailyTimeRecord::where('employee_id', $request->employee_id)
+                ->where('entry_date', $request->entry_date)
+                ->first();
+
+            if ($existingRecord) {
+                return response()->json(['message' => 'Daily Time Record already exists for this employee and date', 'record' => $existingRecord], 409);
+            }
+
             $record = DailyTimeRecord::create([
                 'employee_id' => $request->employee_id,
                 'entry_date' => $request->entry_date,
@@ -149,9 +158,7 @@ class DailyTimeRecordController extends Controller
         return $this->importFromPath($path);
     }
 
-    /**
-     * Common import logic from CSV file path.
-     */
+   
     private function importFromPath($path)
     {
         $file_handle = fopen($path, 'r');
@@ -171,12 +178,11 @@ class DailyTimeRecordController extends Controller
             return response()->json(['message' => 'CSV file is empty or invalid'], 422);
         }
 
-        // Remove BOM from first header element if present
         if (substr($header[0], 0, 3) === "\xEF\xBB\xBF") {
             $header[0] = substr($header[0], 3);
         }
 
-        // Normalize header: trim spaces and lowercase
+   
         $normalizedHeader = array_map(function($h) {
             return strtolower(trim($h));
         }, $header);
@@ -308,4 +314,17 @@ class DailyTimeRecordController extends Controller
 
         return response()->json(['daily_time_records' => $records]);
     }
+
+
+        public function getRecordById($id)
+        {
+    $record = DailyTimeRecord::find($id);
+
+    if (!$record) {
+        return response()->json(['message' => 'Daily Time Record not found'], 404);
+    }
+
+    return response()->json(['daily_time_record' => $record]);
+}
+
 }
